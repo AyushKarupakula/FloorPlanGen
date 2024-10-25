@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import Home from './components/Home';
 import GenerateLayout from './components/GenerateLayout';
 import Feedback from './components/Feedback';
+import FavoriteLayouts from './components/FavoriteLayouts';
 import './styles/App.css';
 
 const AppContainer = styled.div`
@@ -29,6 +30,7 @@ function App() {
             <Route exact path="/" component={Home} />
             <Route path="/generate" component={GenerateLayout} />
             <Route path="/feedback" component={Feedback} />
+            <Route path="/favorites" component={FavoriteLayouts} />
           </Switch>
         </MainContent>
         <Footer />

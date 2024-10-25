@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
+import { toPdf } from 'react-to-pdf';
 
 const ViewerContainer = styled.div`
   max-width: 800px;
@@ -62,9 +63,36 @@ const DetailItem = styled.li`
   margin-bottom: 0.5rem;
 `;
 
-function LayoutViewer({ layout }) {
+const ExportButton = styled.button`
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    background-color: #138496;
+  }
+`;
+
+const FavoriteButton = styled.button`
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: ${props => props.isFavorite ? '#ffc107' : '#6c757d'};
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    background-color: ${props => props.isFavorite ? '#e0a800' : '#5a6268'};
+  }
+`;
+
+function LayoutViewer({ layout, onFavorite, isFavorite }) {
   const [zoom, setZoom] = useState(1);
   const [saved, setSaved] = useState(false);
+  const pdfRef = useRef();
 
   if (!layout) {
     return null;
@@ -80,8 +108,14 @@ function LayoutViewer({ layout }) {
     setTimeout(() => setSaved(false), 2000);
   };
 
+  const handleExport = () => {
+    toPdf(pdfRef, {
+      filename: `${layout.name}.pdf`,
+    });
+  };
+
   return (
-    <ViewerContainer>
+    <ViewerContainer ref={pdfRef}>
       <h2>{layout.name}</h2>
       <LayoutImage src={layout.image} alt={layout.name} zoom={zoom} />
       <LayoutDescription>{layout.description}</LayoutDescription>
@@ -100,6 +134,12 @@ function LayoutViewer({ layout }) {
       <SaveButton onClick={handleSave}>
         {saved ? 'Saved!' : 'Save Layout'}
       </SaveButton>
+      <FavoriteButton onClick={() => onFavorite(layout)} isFavorite={isFavorite}>
+        {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+      </FavoriteButton>
+      <ExportButton onClick={handleExport}>
+        Export as PDF
+      </ExportButton>
     </ViewerContainer>
   );
 }

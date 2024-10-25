@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import RoomSelector from './RoomSelector';
 import LayoutViewer from './LayoutViewer';
@@ -43,6 +43,12 @@ function GenerateLayout() {
   const [layoutHistory, setLayoutHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [comparisonLayout, setComparisonLayout] = useState(null);
+  const [favorites, setFavorites] = useState([]);
+
+  useEffect(() => {
+    const storedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    setFavorites(storedFavorites);
+  }, []);
 
   const handleGenerate = async (preferences) => {
     setIsLoading(true);
@@ -68,6 +74,17 @@ function GenerateLayout() {
     }
   };
 
+  const handleFavorite = (layout) => {
+    const newFavorites = favorites.some(fav => fav.id === layout.id)
+      ? favorites.filter(fav => fav.id !== layout.id)
+      : [...favorites, layout];
+    
+    setFavorites(newFavorites);
+    localStorage.setItem('favorites', JSON.stringify(newFavorites));
+  };
+
+  const isFavorite = (layout) => favorites.some(fav => fav.id === layout.id);
+
   return (
     <GenerateLayoutContainer>
       <h1>Generate Your Floor Plan</h1>
@@ -76,7 +93,11 @@ function GenerateLayout() {
         <LoadingMessage>Generating your floor plan...</LoadingMessage>
       ) : generatedLayout && (
         <>
-          <LayoutViewer layout={generatedLayout} />
+          <LayoutViewer 
+            layout={generatedLayout} 
+            onFavorite={handleFavorite}
+            isFavorite={isFavorite(generatedLayout)}
+          />
           {layoutHistory.length > 1 && (
             <CompareButton onClick={handleCompare}>
               Compare with Previous Layout

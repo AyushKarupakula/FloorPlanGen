@@ -39,6 +39,9 @@ function NavBar() {
           <NavLink to="/generate">Generate Layout</NavLink>
         </NavItem>
         <NavItem>
+          <NavLink to="/favorites">Favorites</NavLink>
+        </NavItem>
+        <NavItem>
           <NavLink to="/feedback">Feedback</NavLink>
         </NavItem>
       </NavList>
