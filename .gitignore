@@ -29,6 +29,7 @@ __pycache__/
 venv/
 env/
 ENV/
+.venv
 
 # IDEs and editors
 /.idea
@@ -64,3 +65,16 @@ media
 *.swp
 *.swo
 *~
+
+# Ensure no node_modules are included
+**/node_modules/
+
+# Environment variables
+.env
+
+# Data files
+*.txt
+*.png
+*.csv
+*.xlsx
+*.json
