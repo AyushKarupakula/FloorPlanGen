@@ -34,16 +34,44 @@ const Button = styled.button`
   }
 `;
 
+const CheckboxGroup = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.5rem;
+`;
+
+const CheckboxLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
 function RoomSelector({ onGenerate }) {
   const [preferences, setPreferences] = useState({
     roomCount: 2,
     style: 'modern',
     squareFootage: 1000,
+    openPlan: false,
+    features: [],
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setPreferences((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    if (type === 'checkbox') {
+      if (name === 'features') {
+        setPreferences(prev => ({
+          ...prev,
+          features: checked
+            ? [...prev.features, value]
+            : prev.features.filter(feature => feature !== value)
+        }));
+      } else {
+        setPreferences(prev => ({ ...prev, [name]: checked }));
+      }
+    } else {
+      setPreferences(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = (e) => {
@@ -70,6 +98,8 @@ function RoomSelector({ onGenerate }) {
           <option value="modern">Modern</option>
           <option value="traditional">Traditional</option>
           <option value="minimalist">Minimalist</option>
+          <option value="industrial">Industrial</option>
+          <option value="rustic">Rustic</option>
         </Select>
       </Label>
       <Label>
@@ -83,6 +113,32 @@ function RoomSelector({ onGenerate }) {
           max="5000"
           step="100"
         />
+      </Label>
+      <CheckboxLabel>
+        <input
+          type="checkbox"
+          name="openPlan"
+          checked={preferences.openPlan}
+          onChange={handleChange}
+        />
+        Open Plan Layout
+      </CheckboxLabel>
+      <Label>
+        Features:
+        <CheckboxGroup>
+          {['Home Office', 'Balcony', 'Fireplace', 'Walk-in Closet'].map(feature => (
+            <CheckboxLabel key={feature}>
+              <input
+                type="checkbox"
+                name="features"
+                value={feature}
+                checked={preferences.features.includes(feature)}
+                onChange={handleChange}
+              />
+              {feature}
+            </CheckboxLabel>
+          ))}
+        </CheckboxGroup>
       </Label>
       <Button type="submit">Generate Layout</Button>
     </Form>
