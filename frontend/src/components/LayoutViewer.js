@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
-import { toPdf } from 'react-to-pdf';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const ViewerContainer = styled.div`
   max-width: 800px;
@@ -103,14 +104,16 @@ function LayoutViewer({ layout, onFavorite, isFavorite }) {
   const handleResetZoom = () => setZoom(1);
 
   const handleSave = () => {
-    // In a real application, this would save the layout to a database
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
 
   const handleExport = () => {
-    toPdf(pdfRef, {
-      filename: `${layout.name}.pdf`,
+    html2canvas(pdfRef.current).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF();
+      pdf.addImage(imgData, 'PNG', 0, 0);
+      pdf.save(`${layout.name}.pdf`);
     });
   };
 
