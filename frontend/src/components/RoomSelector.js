@@ -47,6 +47,12 @@ const CheckboxLabel = styled.label`
   gap: 0.5rem;
 `;
 
+const ErrorMessage = styled.p`
+  color: #dc3545;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+`;
+
 function RoomSelector({ onGenerate }) {
   const [preferences, setPreferences] = useState({
     roomCount: 2,
@@ -55,6 +61,7 @@ function RoomSelector({ onGenerate }) {
     openPlan: false,
     features: [],
   });
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -74,9 +81,23 @@ function RoomSelector({ onGenerate }) {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (preferences.roomCount < 1 || preferences.roomCount > 10) {
+      newErrors.roomCount = 'Room count must be between 1 and 10';
+    }
+    if (preferences.squareFootage < 500 || preferences.squareFootage > 5000) {
+      newErrors.squareFootage = 'Square footage must be between 500 and 5000';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onGenerate(preferences);
+    if (validateForm()) {
+      onGenerate(preferences);
+    }
   };
 
   return (
@@ -91,6 +112,7 @@ function RoomSelector({ onGenerate }) {
           min="1"
           max="10"
         />
+        {errors.roomCount && <ErrorMessage>{errors.roomCount}</ErrorMessage>}
       </Label>
       <Label>
         Style:
@@ -113,6 +135,7 @@ function RoomSelector({ onGenerate }) {
           max="5000"
           step="100"
         />
+        {errors.squareFootage && <ErrorMessage>{errors.squareFootage}</ErrorMessage>}
       </Label>
       <CheckboxLabel>
         <input

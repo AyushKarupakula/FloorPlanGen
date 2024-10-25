@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import RoomSelector from './RoomSelector';
 import LayoutViewer from './LayoutViewer';
 import { generateLayout } from '../mock/layoutData';
@@ -10,10 +10,17 @@ const GenerateLayoutContainer = styled.div`
   padding: 2rem;
 `;
 
+const pulse = keyframes`
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+`;
+
 const LoadingMessage = styled.p`
   text-align: center;
   font-style: italic;
   color: #666;
+  animation: ${pulse} 1.5s ease-in-out infinite;
 `;
 
 function GenerateLayout() {
